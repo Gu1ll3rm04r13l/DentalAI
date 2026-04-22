@@ -1,0 +1,6 @@
+node_modules/
+.next/
+.env.local
+data/mensajes.json
+data/turnos.json
+# data/configuracion.json NO se ignora — queremos que quede la config default
