@@ -41,7 +41,7 @@ export default function CalendarioTurnos({ turnos }: Props) {
   return (
     <div>
       <div className="flex justify-center">
-        <div className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-4 shadow-sm">
           <DayPicker
             mode="single"
             selected={diaSeleccionado}
@@ -50,9 +50,9 @@ export default function CalendarioTurnos({ turnos }: Props) {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             footer={
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-100 mt-2">
+              <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 mt-2">
                 <div className="w-2 h-2 rounded-full bg-blue-600" />
-                <span className="text-xs text-slate-500">Días con turnos activos</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">Días con turnos activos</span>
               </div>
             }
             components={{
@@ -71,17 +71,17 @@ export default function CalendarioTurnos({ turnos }: Props) {
 
       {diaSeleccionado && (
         <div className="mt-6">
-          <h3 className="font-semibold text-slate-900 mb-3">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
             Turnos del{" "}
             {format(diaSeleccionado, "EEEE d 'de' MMMM", { locale: es })}
             {turnosDelDia.length > 0 && (
-              <span className="ml-2 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-medium">
                 {turnosDelDia.length}
               </span>
             )}
           </h3>
           {turnosDelDia.length === 0 ? (
-            <p className="text-slate-400 text-sm">No hay turnos activos para este día.</p>
+            <p className="text-slate-400 dark:text-slate-500 text-sm">No hay turnos activos para este día.</p>
           ) : (
             <div className="space-y-2">
               {turnosDelDia
