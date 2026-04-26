@@ -83,7 +83,7 @@ export const TOOLS = [
     function: {
       name: "cancelar_turno",
       description:
-        "Cancela un turno existente por su ID. Cambia el estado a cancelado. Usala cuando el paciente confirme que quiere cancelar.",
+        "Cancela un turno existente por su ID. Cambia el estado a cancelado. Usala cuando el paciente confirme que quiere cancelar. IMPORTANTE: NUNCA le pedís el id_turno al paciente ni lo mostrás en el chat. Obtenelo llamando primero a ver_turnos_paciente con el nombre del paciente.",
       parameters: {
         type: "object",
         properties: {
@@ -101,7 +101,7 @@ export const TOOLS = [
     function: {
       name: "reprogramar_turno",
       description:
-        "Mueve un turno a una nueva fecha y hora. Cancela el turno viejo y crea uno nuevo con los mismos datos. Verificá disponibilidad antes.",
+        "Mueve un turno a una nueva fecha y hora. Cancela el turno viejo y crea uno nuevo con los mismos datos. Verificá disponibilidad antes. IMPORTANTE: NUNCA le pedís el id_turno al paciente ni lo mostrás en el chat. Obtenelo llamando primero a ver_turnos_paciente con el nombre del paciente.",
       parameters: {
         type: "object",
         properties: {
