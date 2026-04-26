@@ -66,3 +66,11 @@ export async function estaOcupado(fecha: string, hora: string): Promise<boolean>
   const activos = await turnosActivosEnFecha(fecha)
   return activos.some((t) => t.hora === hora)
 }
+
+export function turnosActivosEnFechaFromList(fecha: string, turnos: Turno[]): Turno[] {
+  return turnos.filter((t) => t.fecha === fecha && t.estado === "activo")
+}
+
+export function estaOcupadoFromList(fecha: string, hora: string, turnos: Turno[]): boolean {
+  return turnos.some((t) => t.fecha === fecha && t.hora === hora && t.estado === "activo")
+}
