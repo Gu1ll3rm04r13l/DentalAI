@@ -10,9 +10,16 @@ export interface MensajeChat {
   timestamp: string
 }
 
+type StreamEvent =
+  | { type: "tool_call"; name: string }
+  | { type: "delta"; text: string }
+  | { type: "done"; mensajes_nuevos: unknown }
+  | { type: "error"; mensaje: string }
+
 interface ChatStore {
   mensajes: MensajeChat[]
   cargando: boolean
+  herramientaActiva: string | null
   enviarMensaje: (texto: string) => Promise<void>
   nuevaConversacion: () => Promise<void>
   sincronizarConServidor: () => Promise<void>
@@ -23,6 +30,7 @@ export const useChatStore = create<ChatStore>()(
     (set, get) => ({
       mensajes: [],
       cargando: false,
+      herramientaActiva: null,
 
       enviarMensaje: async (texto: string) => {
         const mensajeUsuario: MensajeChat = {
@@ -31,11 +39,27 @@ export const useChatStore = create<ChatStore>()(
           contenido: texto,
           timestamp: new Date().toISOString(),
         }
+        const placeholderId = crypto.randomUUID()
+        const placeholder: MensajeChat = {
+          id: placeholderId,
+          rol: "assistant",
+          contenido: "",
+          timestamp: new Date().toISOString(),
+        }
 
         set((state) => ({
-          mensajes: [...state.mensajes, mensajeUsuario],
+          mensajes: [...state.mensajes, mensajeUsuario, placeholder],
           cargando: true,
+          herramientaActiva: null,
         }))
+
+        const reemplazarPlaceholder = (contenido: string) => {
+          set((state) => ({
+            mensajes: state.mensajes.map((m) =>
+              m.id === placeholderId ? { ...m, contenido } : m
+            ),
+          }))
+        }
 
         try {
           const res = await fetch("/api/chat", {
@@ -44,29 +68,63 @@ export const useChatStore = create<ChatStore>()(
             body: JSON.stringify({ mensaje: texto }),
           })
 
-          const data = await res.json()
-          const respuestaSarah: MensajeChat = {
-            id: crypto.randomUUID(),
-            rol: "assistant",
-            contenido: data.mensaje ?? "Uy, algo salió mal. ¿Lo intentás de nuevo?",
-            timestamp: new Date().toISOString(),
+          if (!res.ok || !res.body) {
+            const fallback = await res.json().catch(() => null)
+            const mensajeError =
+              fallback?.error ?? fallback?.mensaje ?? "Error del servidor. Probá de nuevo."
+            reemplazarPlaceholder(mensajeError)
+            set({ cargando: false, herramientaActiva: null })
+            return
           }
 
-          set((state) => ({
-            mensajes: [...state.mensajes, respuestaSarah],
-            cargando: false,
-          }))
-        } catch {
-          const mensajeError: MensajeChat = {
-            id: crypto.randomUUID(),
-            rol: "assistant",
-            contenido: "Parece que se cortó la conexión. Revisá tu internet y volvé a probar.",
-            timestamp: new Date().toISOString(),
+          const reader = res.body.getReader()
+          const decoder = new TextDecoder()
+          let buffer = ""
+          let textoAcumulado = ""
+
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            buffer += decoder.decode(value, { stream: true })
+            const eventos = buffer.split("\n\n")
+            buffer = eventos.pop() ?? ""
+            for (const ev of eventos) {
+              const linea = ev.trim()
+              if (!linea.startsWith("data:")) continue
+              const json = linea.slice(5).trim()
+              if (!json) continue
+              let parsed: StreamEvent
+              try {
+                parsed = JSON.parse(json) as StreamEvent
+              } catch {
+                continue
+              }
+
+              if (parsed.type === "delta") {
+                textoAcumulado += parsed.text
+                reemplazarPlaceholder(textoAcumulado)
+                if (get().herramientaActiva) {
+                  set({ herramientaActiva: null })
+                }
+              } else if (parsed.type === "tool_call") {
+                set({ herramientaActiva: parsed.name })
+              } else if (parsed.type === "error") {
+                reemplazarPlaceholder(parsed.mensaje)
+              }
+            }
           }
-          set((state) => ({
-            mensajes: [...state.mensajes, mensajeError],
-            cargando: false,
-          }))
+
+          if (!textoAcumulado.trim()) {
+            reemplazarPlaceholder(
+              "Tuve un problema al procesar tu mensaje. ¿Lo intentás de nuevo?"
+            )
+          }
+        } catch {
+          reemplazarPlaceholder(
+            "Parece que se cortó la conexión. Revisá tu internet y volvé a probar."
+          )
+        } finally {
+          set({ cargando: false, herramientaActiva: null })
         }
       },
 
@@ -74,9 +132,9 @@ export const useChatStore = create<ChatStore>()(
         try {
           await fetch("/api/mensajes", { method: "DELETE" })
         } catch {
-          // Si falla el delete del servidor, igual limpiamos localmente
+          // continuar igual
         }
-        set({ mensajes: [], cargando: false })
+        set({ mensajes: [], cargando: false, herramientaActiva: null })
       },
 
       sincronizarConServidor: async () => {
@@ -85,6 +143,7 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           const res = await fetch("/api/mensajes")
+          if (!res.ok) return
           const data = await res.json()
           const mensajesServidor = (data.mensajes ?? []) as Array<{
             id: string
@@ -106,7 +165,7 @@ export const useChatStore = create<ChatStore>()(
             set({ mensajes: filtrados })
           }
         } catch {
-          // Si falla la sincronización, no hacemos nada
+          // sincronización silenciosa
         }
       },
     }),
