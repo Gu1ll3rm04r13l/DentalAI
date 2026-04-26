@@ -81,6 +81,7 @@ export const useChatStore = create<ChatStore>()(
           const decoder = new TextDecoder()
           let buffer = ""
           let textoAcumulado = ""
+          let errorRecibido = false
 
           while (true) {
             const { done, value } = await reader.read()
@@ -110,11 +111,12 @@ export const useChatStore = create<ChatStore>()(
                 set({ herramientaActiva: parsed.name })
               } else if (parsed.type === "error") {
                 reemplazarPlaceholder(parsed.mensaje)
+                errorRecibido = true
               }
             }
           }
 
-          if (!textoAcumulado.trim()) {
+          if (!textoAcumulado.trim() && !errorRecibido) {
             reemplazarPlaceholder(
               "Tuve un problema al procesar tu mensaje. ¿Lo intentás de nuevo?"
             )

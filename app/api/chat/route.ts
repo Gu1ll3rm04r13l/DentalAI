@@ -168,27 +168,12 @@ export async function POST(req: NextRequest) {
               continue
             }
 
-            // Sin tool_calls: stream la respuesta final
-            const respuestaStream = await getGroqClient().chat.completions.create({
-              model: MODELO,
-              messages: groqMessages,
-              temperature: 0.6,
-              max_tokens: 1024,
-              stream: true,
-            })
-
-            for await (const chunk of respuestaStream) {
-              const delta = chunk.choices[0]?.delta?.content ?? ""
-              if (delta) {
-                mensajeFinal += delta
-                send({ type: "delta", text: delta })
-              }
-            }
-
+            // Sin tool_calls: usar la respuesta ya recibida
+            mensajeFinal = assistantMessage.content ?? ""
             if (!mensajeFinal.trim()) {
               mensajeFinal = "Disculpá, ¿podés repetirme eso? No llegué a procesar bien tu mensaje."
-              send({ type: "delta", text: mensajeFinal })
             }
+            send({ type: "delta", text: mensajeFinal })
 
             const msgFinal = await agregarMensaje("assistant", mensajeFinal)
             mensajesNuevos.push(msgFinal)
