@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
 import { getGroqClient, MODELO } from "@/lib/sarah/cliente"
 import { TOOLS } from "@/lib/sarah/tools"
 import { buildSystemPrompt } from "@/lib/sarah/systemPrompt"
@@ -8,9 +9,18 @@ import { leerConfiguracion } from "@/lib/storage/configuracion"
 import type { Mensaje } from "@/lib/dominio/tipos"
 import type Groq from "groq-sdk"
 
+export const dynamic = "force-dynamic"
+
+const InputChatSchema = z.object({
+  mensaje: z
+    .string()
+    .trim()
+    .min(1, "El mensaje no puede estar vacío")
+    .max(2000, "El mensaje es demasiado largo (máx. 2000 caracteres)."),
+})
+
 type GroqMessage = Groq.Chat.ChatCompletionMessageParam
 
-// Limitar el historial que se manda a Groq para evitar contextos demasiado largos
 const MAX_HISTORIAL_MENSAJES = 30
 
 function mensajesAGroq(mensajes: Mensaje[]): GroqMessage[] {
@@ -69,16 +79,19 @@ function clasificarError(error: unknown): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { mensaje } = body as { mensaje: string }
-
-    if (!mensaje?.trim()) {
-      return NextResponse.json({ error: "El mensaje no puede estar vacío" }, { status: 400 })
+    const body = await req.json().catch(() => null)
+    const parseado = InputChatSchema.safeParse(body)
+    if (!parseado.success) {
+      return NextResponse.json(
+        { error: parseado.error.errors[0]?.message ?? "Entrada inválida" },
+        { status: 400 }
+      )
     }
+    const mensaje = parseado.data.mensaje
 
     const [config, historial] = await Promise.all([leerConfiguracion(), listarMensajes()])
 
-    const mensajeUsuario = await agregarMensaje("user", mensaje.trim())
+    const mensajeUsuario = await agregarMensaje("user", mensaje)
     const mensajesNuevos: Mensaje[] = [mensajeUsuario]
 
     const systemPrompt = buildSystemPrompt(config)
