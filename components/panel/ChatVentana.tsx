@@ -7,7 +7,18 @@ import ListaMensajes from "./ListaMensajes"
 import SugerenciasIniciales from "./SugerenciasIniciales"
 
 export default function ChatVentana() {
-  const { mensajes, cargando, enviarMensaje, nuevaConversacion, sincronizarConServidor } = useChatStore()
+  const { mensajes, cargando, herramientaActiva, enviarMensaje, nuevaConversacion, sincronizarConServidor } = useChatStore()
+
+  const ETIQUETAS_TOOLS: Record<string, string> = {
+    ver_disponibilidad: "Consultando disponibilidad...",
+    ver_turnos_paciente: "Buscando turnos del paciente...",
+    agendar_turno: "Agendando turno...",
+    cancelar_turno: "Cancelando turno...",
+    reprogramar_turno: "Reprogramando turno...",
+  }
+  const etiquetaTool = herramientaActiva
+    ? (ETIQUETAS_TOOLS[herramientaActiva] ?? "Procesando...")
+    : null
   const [input, setInput] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -67,6 +78,9 @@ export default function ChatVentana() {
           <SugerenciasIniciales onSugerencia={(texto) => enviarMensaje(texto)} />
         ) : (
           <ListaMensajes mensajes={mensajes} cargando={cargando} />
+        )}
+        {etiquetaTool && (
+          <div className="px-6 py-2 text-xs text-slate-500 italic">{etiquetaTool}</div>
         )}
       </div>
 
