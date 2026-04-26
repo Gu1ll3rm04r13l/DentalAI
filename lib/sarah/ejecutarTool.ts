@@ -4,8 +4,8 @@ import {
   actualizarEstado,
   buscarTurnoPorId,
   buscarTurnosPorPaciente,
-  turnosActivosEnFecha,
-  estaOcupado,
+  turnosActivosEnFechaFromList,
+  estaOcupadoFromList,
 } from "../storage/turnos"
 import {
   esFechaValida,
@@ -33,7 +33,7 @@ async function verDisponibilidad(args: { fecha: string }): Promise<ResultadoTool
 
   const todos = await listarTurnos()
   const libres = slotsLibresFuturos(fecha, todos)
-  const activos = await turnosActivosEnFecha(fecha)
+  const activos = turnosActivosEnFechaFromList(fecha, todos)
 
   if (libres.length === 0) {
     return {
@@ -112,9 +112,9 @@ async function agendarTurno(args: {
     }
   }
 
-  const ocupado = await estaOcupado(fecha, hora)
+  const todos = await listarTurnos()
+  const ocupado = estaOcupadoFromList(fecha, hora, todos)
   if (ocupado) {
-    const todos = await listarTurnos()
     const libres = slotsLibresFuturos(fecha, todos)
     const alternativos = slotsCercanos(hora, libres)
     return {
@@ -180,9 +180,9 @@ async function reprogramarTurno(args: {
     }
   }
 
-  const ocupado = await estaOcupado(nueva_fecha, nueva_hora)
+  const todos = await listarTurnos()
+  const ocupado = estaOcupadoFromList(nueva_fecha, nueva_hora, todos)
   if (ocupado) {
-    const todos = await listarTurnos()
     const libres = slotsLibresFuturos(nueva_fecha, todos)
     const alternativos = slotsCercanos(nueva_hora, libres)
     return {
