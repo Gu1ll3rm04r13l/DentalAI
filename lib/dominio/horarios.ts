@@ -5,7 +5,10 @@ const HORA_INICIO = 9
 const HORA_FIN = 18
 const INTERVALO_MINUTOS = 30
 
-export function generarSlotsDelDia(): string[] {
+let _slotsCache: readonly string[] | null = null
+
+export function generarSlotsDelDia(): readonly string[] {
+  if (_slotsCache) return _slotsCache
   const slots: string[] = []
   for (let hora = HORA_INICIO; hora < HORA_FIN; hora++) {
     for (let minutos = 0; minutos < 60; minutos += INTERVALO_MINUTOS) {
@@ -14,7 +17,8 @@ export function generarSlotsDelDia(): string[] {
       slots.push(`${hh}:${mm}`)
     }
   }
-  return slots
+  _slotsCache = Object.freeze(slots)
+  return _slotsCache
 }
 
 export function esDomingo(fecha: string): boolean {
