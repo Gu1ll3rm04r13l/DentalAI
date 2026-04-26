@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["groq-sdk"],
-  },
+  serverExternalPackages: ["groq-sdk"],
 }
 
 export default nextConfig
