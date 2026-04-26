@@ -39,6 +39,18 @@ export async function actualizarEstado(id: string, estado: EstadoTurno): Promise
   return turnos[idx]
 }
 
+export async function actualizarTurno(
+  id: string,
+  datos: Partial<Omit<Turno, "id" | "creado_en" | "actualizado_en">>
+): Promise<Turno | null> {
+  const turnos = await listarTurnos()
+  const idx = turnos.findIndex((t) => t.id === id)
+  if (idx === -1) return null
+  turnos[idx] = { ...turnos[idx], ...datos, actualizado_en: new Date().toISOString() }
+  await escribirJSON(RUTA, turnos)
+  return turnos[idx]
+}
+
 export async function buscarTurnoPorId(id: string): Promise<Turno | null> {
   const turnos = await listarTurnos()
   return turnos.find((t) => t.id === id) ?? null
