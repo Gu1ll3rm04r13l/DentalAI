@@ -13,12 +13,65 @@
   --radius: 1rem;
 }
 
+.dark {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 96%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 33% 22%;
+}
+
 body {
   color: hsl(var(--foreground));
   background-color: #ffffff;
   background-image: linear-gradient(to bottom right, rgba(239, 246, 255, 0.3), #ffffff, #ffffff);
   font-feature-settings: "cv11", "ss01";
   font-variant-ligatures: contextual;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.dark body {
+  background-color: #0d1117;
+  background-image: none;
+  color: hsl(var(--foreground));
+}
+
+.dark .rdp-root {
+  --rdp-accent-color: #3b82f6;
+  --rdp-accent-background-color: #1e3a5f;
+  color: #cbd5e1;
+  background: transparent;
+}
+
+.dark .rdp-day_button {
+  color: #cbd5e1;
+}
+
+.dark .rdp-day_button:hover {
+  background-color: #334155;
+}
+
+.dark .rdp-selected .rdp-day_button {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.dark .rdp-today .rdp-day_button {
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+.dark .rdp-month_caption,
+.dark .rdp-weekday {
+  color: #94a3b8;
+}
+
+.dark .rdp-nav button {
+  color: #94a3b8;
+}
+
+.dark .rdp-nav button:hover {
+  background-color: #334155;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -30,6 +83,10 @@ body {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 
 @layer utilities {

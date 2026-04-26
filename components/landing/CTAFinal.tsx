@@ -12,7 +12,7 @@ export default function CTAFinal() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mx-auto text-center rounded-3xl bg-gradient-to-br from-blue-600 to-blue-700 p-14 shadow-2xl shadow-blue-200"
+        className="max-w-3xl mx-auto text-center rounded-3xl bg-gradient-to-br from-blue-600 to-blue-700 p-14 shadow-2xl shadow-blue-200 dark:shadow-blue-900/60"
       >
         <h2 className="text-4xl font-bold text-white mb-4">
           Probalo sin compromiso
