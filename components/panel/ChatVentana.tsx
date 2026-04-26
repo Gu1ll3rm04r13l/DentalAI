@@ -54,9 +54,9 @@ export default function ChatVentana() {
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
         <div>
-          <h1 className="font-semibold text-slate-900">Sarah</h1>
+          <h1 className="font-semibold text-slate-900 dark:text-slate-100">Sarah</h1>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
             <span className="text-xs text-slate-500">Recepcionista virtual · En línea</span>
@@ -64,7 +64,7 @@ export default function ChatVentana() {
         </div>
         <button
           onClick={handleNuevaConversacion}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           title="Nueva conversación"
         >
           <RotateCcw className="w-4 h-4" />
@@ -77,16 +77,13 @@ export default function ChatVentana() {
         {mensajes.length === 0 ? (
           <SugerenciasIniciales onSugerencia={(texto) => enviarMensaje(texto)} />
         ) : (
-          <ListaMensajes mensajes={mensajes} cargando={cargando} />
-        )}
-        {etiquetaTool && (
-          <div className="px-6 py-2 text-xs text-slate-500 italic">{etiquetaTool}</div>
+          <ListaMensajes mensajes={mensajes} cargando={cargando} etiquetaTool={etiquetaTool} />
         )}
       </div>
 
       {/* Input */}
-      <div className="px-5 py-4 border-t border-slate-100 bg-white">
-        <div className="flex items-end gap-3 px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 focus-within:border-blue-300 focus-within:bg-white transition-all duration-150">
+      <div className="px-5 py-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors duration-200">
+        <div className="flex items-end gap-3 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 focus-within:border-blue-300 dark:focus-within:border-blue-600 focus-within:bg-white dark:focus-within:bg-slate-800 transition-all duration-150">
           <textarea
             ref={textareaRef}
             value={input}
@@ -94,7 +91,7 @@ export default function ChatVentana() {
             onKeyDown={handleKeyDown}
             placeholder="Escribí tu mensaje... (Enter para enviar, Shift+Enter para nueva línea)"
             rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-sm text-slate-800 placeholder:text-slate-400 leading-relaxed"
+            className="flex-1 bg-transparent resize-none outline-none text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600 leading-relaxed"
             style={{ maxHeight: "96px" }}
             disabled={cargando}
           />
