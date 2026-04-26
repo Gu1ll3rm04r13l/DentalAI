@@ -92,16 +92,16 @@ export default function FormularioConfig({ initialConfig }: Props) {
   }
 
   const inputClase = (campo: string) =>
-    `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-colors ${
+    `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-colors text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 ${
       errores[campo]
-        ? "border-red-300 bg-red-50 focus:border-red-400"
-        : "border-slate-200 bg-white focus:border-blue-400"
+        ? "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 focus:border-red-400"
+        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:border-blue-400 dark:focus:border-blue-500"
     }`
 
   return (
     <div className="space-y-6">
       {/* Banner informativo */}
-      <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-800 text-sm">
+      <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-sm">
         <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
         <span>
           Estos datos los usa Sarah para responder. Cualquier cambio se aplica en la próxima conversación.
@@ -113,8 +113,8 @@ export default function FormularioConfig({ initialConfig }: Props) {
         <div
           className={`flex items-center gap-3 p-4 rounded-xl text-sm font-medium ${
             toast.tipo === "ok"
-              ? "bg-emerald-50 border border-emerald-100 text-emerald-800"
-              : "bg-red-50 border border-red-100 text-red-800"
+              ? "bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300"
+              : "bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-800 dark:text-red-300"
           }`}
         >
           {toast.tipo === "ok" ? "✅" : "⚠️"} {toast.mensaje}
@@ -124,7 +124,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
       <div className="grid md:grid-cols-2 gap-5">
         {/* Nombre */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Nombre de la clínica</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nombre de la clínica</label>
           <input
             value={form.nombre}
             onChange={(e) => set("nombre", e.target.value)}
@@ -136,7 +136,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
         {/* Dirección */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Dirección</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Dirección</label>
           <input
             value={form.direccion}
             onChange={(e) => set("direccion", e.target.value)}
@@ -148,7 +148,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
         {/* Teléfono */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Teléfono</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Teléfono</label>
           <input
             value={form.telefono}
             onChange={(e) => set("telefono", e.target.value)}
@@ -160,7 +160,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
         {/* WhatsApp */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">WhatsApp</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">WhatsApp</label>
           <input
             value={form.whatsapp}
             onChange={(e) => set("whatsapp", e.target.value)}
@@ -172,7 +172,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
         {/* Email */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
           <input
             type="email"
             value={form.email}
@@ -186,10 +186,10 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
       {/* Horarios */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">Horarios de atención</h3>
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Horarios de atención</h3>
         <div className="grid md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs text-slate-500 mb-1.5">Lunes a viernes</label>
+            <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1.5">Lunes a viernes</label>
             <input
               value={form.horarios.lunes_a_viernes}
               onChange={(e) => setHorario("lunes_a_viernes", e.target.value)}
@@ -198,7 +198,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs text-slate-500 mb-1.5">Sábados</label>
+            <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1.5">Sábados</label>
             <input
               value={form.horarios.sabados}
               onChange={(e) => setHorario("sabados", e.target.value)}
@@ -207,7 +207,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs text-slate-500 mb-1.5">Domingos</label>
+            <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1.5">Domingos</label>
             <input
               value={form.horarios.domingos}
               onChange={(e) => setHorario("domingos", e.target.value)}
@@ -220,17 +220,17 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
       {/* Servicios */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-2">Servicios</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Servicios</label>
         <div className="flex flex-wrap gap-2 mb-3">
           {form.servicios.map((s) => (
             <span
               key={s}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 text-sm border border-blue-100"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm border border-blue-100 dark:border-blue-800"
             >
               {s}
               <button
                 onClick={() => quitarServicio(s)}
-                className="hover:text-blue-900 transition-colors"
+                className="hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
                 aria-label={`Quitar ${s}`}
               >
                 <X className="w-3.5 h-3.5" />
@@ -243,7 +243,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
             value={nuevoServicio}
             onChange={(e) => setNuevoServicio(e.target.value)}
             onKeyDown={handleServicioKey}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:border-blue-400 transition-colors"
+            className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-600 outline-none focus:border-blue-400 dark:focus:border-blue-500 transition-colors"
             placeholder="Escribí un servicio y presioná Enter para agregar..."
           />
           <button
@@ -258,7 +258,7 @@ export default function FormularioConfig({ initialConfig }: Props) {
 
       {/* Descripción */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">Descripción de la clínica</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descripción de la clínica</label>
         <textarea
           value={form.descripcion}
           onChange={(e) => set("descripcion", e.target.value)}
