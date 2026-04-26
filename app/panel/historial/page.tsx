@@ -69,8 +69,6 @@ export default function HistorialPage() {
 
   useEffect(() => {
     cargar()
-    const intervalo = setInterval(cargar, 5000)
-    return () => clearInterval(intervalo)
   }, [])
 
   return (
@@ -79,7 +77,7 @@ export default function HistorialPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Historial de conversación</h1>
           <p className="text-slate-500 text-sm mt-1">
-            {mensajes.length} mensaje{mensajes.length !== 1 ? "s" : ""} · Se actualiza cada 5s
+            {mensajes.length} mensaje{mensajes.length !== 1 ? "s" : ""}
           </p>
         </div>
         <button
