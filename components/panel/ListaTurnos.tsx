@@ -116,6 +116,7 @@ export default function ListaTurnos({ turnos, onActualizar, onEliminar }: Props)
       {editando && (
         <ModalEditarTurno
           turno={editando}
+          turnos={turnos}
           cargando={cargando}
           onGuardar={handleGuardarEdicion}
           onCerrar={() => setEditando(null)}

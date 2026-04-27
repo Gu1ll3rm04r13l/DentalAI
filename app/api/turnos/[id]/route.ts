@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { actualizarTurno } from "@/lib/storage/turnos"
+import { actualizarTurno, eliminarTurno } from "@/lib/storage/turnos"
 import { EstadoTurnoSchema } from "@/lib/dominio/tipos"
 import { z } from "zod"
 
@@ -15,7 +15,19 @@ const PatchBodySchema = z.object({
   estado: EstadoTurnoSchema.optional(),
 })
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
+  try {
+    const eliminado = await eliminarTurno(params.id)
+    if (!eliminado) return NextResponse.json({ error: "Turno no encontrado" }, { status: 404 })
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "No se pudo eliminar el turno" }, { status: 500 })
+  }
+}
+
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const body = await req.json()
     const datos = PatchBodySchema.parse(body)

@@ -17,9 +17,9 @@ export default function TurnosPage() {
   const [turnos, setTurnos] = useState<Turno[]>([])
   const [cargando, setCargando] = useState(true)
 
-  // Estado de modales (usado por la vista Lista que no tiene su propio ListaTurnos)
   const [editando, setEditando] = useState<Turno | null>(null)
   const [cancelando, setCancelando] = useState<Turno | null>(null)
+  const [eliminando, setEliminando] = useState<Turno | null>(null)
   const [guardando, setGuardando] = useState(false)
 
   const cargar = useCallback(async () => {
@@ -40,7 +40,7 @@ export default function TurnosPage() {
     setTurnos((prev) => prev.map((t) => (t.id === turnoActualizado.id ? turnoActualizado : t)))
   }
 
-  function handleEliminar(id: string) {
+  function handleEliminarLocal(id: string) {
     setTurnos((prev) => prev.filter((t) => t.id !== id))
   }
 
@@ -74,8 +74,24 @@ export default function TurnosPage() {
         body: JSON.stringify({ estado: "cancelado" }),
       })
       if (!res.ok) throw new Error()
-      handleEliminar(cancelando.id)
+      const { turno } = await res.json()
+      handleActualizar(turno)
       setCancelando(null)
+    } catch {
+      // silencioso
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  async function handleConfirmarEliminar() {
+    if (!eliminando) return
+    setGuardando(true)
+    try {
+      const res = await fetch(`/api/turnos/${eliminando.id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error()
+      handleEliminarLocal(eliminando.id)
+      setEliminando(null)
     } catch {
       // silencioso
     } finally {
@@ -126,13 +142,14 @@ export default function TurnosPage() {
         <ListaTurnos
           turnos={turnos}
           onActualizar={handleActualizar}
-          onEliminar={handleEliminar}
+          onEliminar={handleEliminarLocal}
         />
       ) : vista === "lista" ? (
         <ListaVerticalTurnos
           turnos={turnos}
           onEditar={setEditando}
           onCancelar={setCancelando}
+          onEliminar={setEliminando}
         />
       ) : (
         <CalendarioTurnos turnos={turnos} />
@@ -141,6 +158,7 @@ export default function TurnosPage() {
       {editando && (
         <ModalEditarTurno
           turno={editando}
+          turnos={turnos}
           cargando={guardando}
           onGuardar={handleGuardarEdicion}
           onCerrar={() => setEditando(null)}
@@ -155,6 +173,17 @@ export default function TurnosPage() {
           cargando={guardando}
           onConfirmar={handleConfirmarCancelar}
           onCancelar={() => setCancelando(null)}
+        />
+      )}
+
+      {eliminando && (
+        <DialogoConfirmar
+          titulo="¿Eliminar este turno?"
+          descripcion={`Vas a eliminar permanentemente el turno de ${eliminando.nombre_paciente} del ${eliminando.fecha} a las ${eliminando.hora}hs. Esta acción no se puede deshacer.`}
+          labelConfirmar="Sí, eliminar"
+          cargando={guardando}
+          onConfirmar={handleConfirmarEliminar}
+          onCancelar={() => setEliminando(null)}
         />
       )}
     </div>

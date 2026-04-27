@@ -11,19 +11,19 @@ function etiquetaRol(rol: string): { label: string; clase: string; icono: React.
     case "user":
       return {
         label: "Paciente",
-        clase: "bg-blue-50 text-blue-700 border border-blue-100",
+        clase: "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800",
         icono: <User className="w-3.5 h-3.5" />,
       }
     case "assistant":
       return {
         label: "Sarah",
-        clase: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+        clase: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-800",
         icono: <Bot className="w-3.5 h-3.5" />,
       }
     default:
       return {
         label: "Sistema",
-        clase: "bg-slate-50 text-slate-600 border border-slate-100",
+        clase: "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-700",
         icono: <Wrench className="w-3.5 h-3.5" />,
       }
   }
@@ -75,14 +75,14 @@ export default function HistorialPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Historial de conversación</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Historial de conversación</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             {mensajes.length} mensaje{mensajes.length !== 1 ? "s" : ""}
           </p>
         </div>
         <button
           onClick={cargar}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <RefreshCw className={`w-4 h-4 ${cargando ? "animate-spin" : ""}`} />
           Actualizar
@@ -104,7 +104,7 @@ export default function HistorialPage() {
             return (
               <div
                 key={m.id}
-                className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:border-slate-200 transition-colors"
+                className="flex items-start gap-4 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
               >
                 <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium flex-shrink-0 ${clase}`}>
                   {icono}
@@ -112,13 +112,13 @@ export default function HistorialPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p
-                    className="text-sm text-slate-700 truncate"
+                    className="text-sm text-slate-700 dark:text-slate-300 truncate"
                     title={contenido}
                   >
                     {contenido.length > 120 ? `${contenido.slice(0, 120)}...` : contenido}
                   </p>
                 </div>
-                <span className="text-xs text-slate-400 flex-shrink-0 whitespace-nowrap">
+                <span className="text-xs text-slate-400 dark:text-slate-500 flex-shrink-0 whitespace-nowrap">
                   {format(parseISO(m.timestamp), "dd/MM/yyyy HH:mm", { locale: es })}
                 </span>
               </div>
