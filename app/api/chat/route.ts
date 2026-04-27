@@ -27,7 +27,7 @@ type StreamEvent =
 
 type GroqMessage = Groq.Chat.ChatCompletionMessageParam
 
-const MAX_HISTORIAL_MENSAJES = 30
+const MAX_HISTORIAL_MENSAJES = 20
 
 function mensajesAGroq(mensajes: Mensaje[]): GroqMessage[] {
   const recientes = mensajes.slice(-MAX_HISTORIAL_MENSAJES)
@@ -63,22 +63,42 @@ function mensajesAGroq(mensajes: Mensaje[]): GroqMessage[] {
 
 function clasificarError(error: unknown): string {
   if (!(error instanceof Error)) {
+    console.error("Error no-Error en chat:", typeof error, error)
     return "Tuve un problema inesperado. ¿Lo intentás de nuevo?"
   }
-  const msg = error.message.toLowerCase()
 
-  if (msg.includes("api key") || msg.includes("apikey") || msg.includes("authentication")) {
+  const msg = error.message.toLowerCase()
+  const status = (error as { status?: number }).status
+
+  if (
+    status === 401 ||
+    msg.includes("api key") || msg.includes("apikey") || msg.includes("authentication") || msg.includes("unauthorized")
+  ) {
     return "Falta configurar la clave de Groq. Revisá el archivo .env.local."
   }
-  if (msg.includes("rate limit") || msg.includes("429")) {
-    return "Le pegué mucho a la API y me cortaron por un momento 😅. Esperá unos segundos y volvé a intentar."
+  if (
+    status === 429 ||
+    msg.includes("rate limit") || msg.includes("rate_limit") || msg.includes("throttl") || msg.includes("429")
+  ) {
+    return "Le pegué mucho a la API y me cortaron por un momento. Esperá unos segundos y volvé a intentar."
   }
-  if (msg.includes("timeout") || msg.includes("network") || msg.includes("fetch")) {
+  if (
+    status === 503 || status === 502 || status === 529 ||
+    msg.includes("overloaded") || msg.includes("service unavailable") || msg.includes("bad gateway") || msg.includes("503") || msg.includes("502")
+  ) {
+    return "Los servidores de Groq están con mucho tráfico ahora. Intentá de nuevo en unos segundos."
+  }
+  if (
+    msg.includes("timeout") || msg.includes("timed out") || msg.includes("network") ||
+    msg.includes("fetch") || msg.includes("econnrefused") || msg.includes("etimedout") || msg.includes("enotfound")
+  ) {
     return "Parece que se cortó la conexión con el servidor. Revisá tu internet y volvé a probar."
   }
-  if (msg.includes("context") || msg.includes("token")) {
+  if (msg.includes("context") || msg.includes("token") || msg.includes("length") || msg.includes("too long")) {
     return "La conversación se puso muy larga. Podés empezar una nueva con el botón de arriba."
   }
+
+  console.error(`Error sin clasificar en chat (status=${status}):`, error.message, error)
   return "Tuve un problema al procesar tu mensaje. ¿Lo intentás de nuevo?"
 }
 

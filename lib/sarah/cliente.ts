@@ -1,6 +1,6 @@
 import Groq from "groq-sdk"
 
-export const MODELO = "llama-3.3-70b-versatile"
+export const MODELO = "llama-3.1-8b-instant"
 
 let _client: Groq | null = null
 

@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server"
-import { listarTurnos } from "@/lib/storage/turnos"
+import { listarTurnos, limpiarTurnosViejos } from "@/lib/storage/turnos"
 
 export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {
+    await limpiarTurnosViejos()
     const turnos = await listarTurnos()
     return NextResponse.json({ turnos })
   } catch (error) {

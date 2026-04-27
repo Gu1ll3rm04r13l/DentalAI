@@ -86,3 +86,23 @@ export function turnosActivosEnFechaFromList(fecha: string, turnos: Turno[]): Tu
 export function estaOcupadoFromList(fecha: string, hora: string, turnos: Turno[]): boolean {
   return turnos.some((t) => t.fecha === fecha && t.hora === hora && t.estado === "activo")
 }
+
+export async function limpiarTurnosViejos(): Promise<number> {
+  const turnos = await listarTurnos()
+  const limite = new Date()
+  limite.setDate(limite.getDate() - 15)
+  const limiteISO = limite.toISOString().slice(0, 10)
+  const vigentes = turnos.filter((t) => t.fecha >= limiteISO)
+  if (vigentes.length === turnos.length) return 0
+  await escribirJSON(RUTA, vigentes)
+  return turnos.length - vigentes.length
+}
+
+export async function eliminarTurno(id: string): Promise<boolean> {
+  const turnos = await listarTurnos()
+  const idx = turnos.findIndex((t) => t.id === id)
+  if (idx === -1) return false
+  turnos.splice(idx, 1)
+  await escribirJSON(RUTA, turnos)
+  return true
+}

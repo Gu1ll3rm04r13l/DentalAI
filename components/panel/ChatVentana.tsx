@@ -38,6 +38,7 @@ export default function ChatVentana() {
     if (!texto || cargando) return
     setInput("")
     await enviarMensaje(texto)
+    textareaRef.current?.focus()
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
