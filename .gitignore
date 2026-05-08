@@ -4,3 +4,6 @@ node_modules/
 data/mensajes.json
 data/turnos.json
 # data/configuracion.json NO se ignora — queremos que quede la config default
+
+# Planes/notas locales
+PLAN_PROXIMOS_PASOS.md
